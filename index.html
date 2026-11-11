@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سيستم فواتير ميفاد | شركة مصر للمستحضرات الغذائية</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <img src="assets/mifad_logo.png" alt="MIFAD Logo" class="brand-logo-img" id="header-logo">
+        <div class="brand-text">
+          <h1>
+            شركة مصر للمستحضرات الغذائية - ميفاد
+            <span class="brand-badge">MIFAD ERP</span>
+          </h1>
+          <p>نظام الفواتير المعتمد وإدارة حسابات العملاء وأذون الاستلام</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="system-tag">سيستم محمود ✨</span>
+        <button class="btn btn-sm btn-primary" onclick="MIFAD_APP.switchTab('new-invoice')">➕ فاتورة جديدة</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <div class="nav-item active" data-tab="dashboard">📊 لوحة التحكم والتحليلات</div>
+      <div class="nav-item" data-tab="new-invoice">📝 إنشاء وتعديل فاتورة</div>
+      <div class="nav-item" data-tab="invoices">📑 أرشيف الفواتير المسجلة</div>
+      <div class="nav-item" data-tab="returns">🔄 إدارة وسجل المرتجعات</div>
+      <div class="nav-item" data-tab="customers">👥 دليل وحسابات العملاء</div>
+      <div class="nav-item" data-tab="products">📦 كتالوج الأصناف والأسعار</div>
+      <div class="nav-item" data-tab="settings">⚙️ النسخ الاحتياطي والإعدادات</div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- =========================================================
+         TAB 1: DASHBOARD
+         ========================================================= -->
+    <section id="tab-dashboard" class="page-tab-content active">
+      <!-- KPI Metrics -->
+      <div class="kpi-grid">
+        <div class="kpi-card sales">
+          <div class="kpi-info">
+            <h4>إجمالي المبيعات (الفواتير)</h4>
+            <div class="kpi-value" id="stat-total-sales">0 ج.م</div>
+          </div>
+          <div class="kpi-icon">💰</div>
+        </div>
+
+        <div class="kpi-card collected">
+          <div class="kpi-info">
+            <h4>المسدد والمحصل (الخزينة)</h4>
+            <div class="kpi-value" id="stat-total-paid" style="color: var(--success);">0 ج.م</div>
+          </div>
+          <div class="kpi-icon">✅</div>
+        </div>
+
+        <div class="kpi-card outstanding">
+          <div class="kpi-info">
+            <h4>المتبقي بالخارج (لينا كام برة)</h4>
+            <div class="kpi-value" id="stat-total-outstanding" style="color: var(--accent);">0 ج.م</div>
+          </div>
+          <div class="kpi-icon">⏳</div>
+        </div>
+
+        <div class="kpi-card returns">
+          <div class="kpi-info">
+            <h4>إجمالي المرتجعات</h4>
+            <div class="kpi-value" id="stat-total-returns" style="color: var(--danger);">0 ج.م</div>
+          </div>
+          <div class="kpi-icon">🔄</div>
+        </div>
+      </div>
+
+      <!-- Quick Summary Row -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Recent Invoices Card -->
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-header">
+            <div class="card-title">📑 أحدث الفواتير المنشأة</div>
+            <button class="btn btn-sm btn-outline" onclick="MIFAD_APP.switchTab('invoices')">عرض الكل</button>
+          </div>
+          <div class="table-responsive">
+            <table class="editable-table">
+              <thead>
+                <tr>
+                  <th>رقم الفاتورة</th>
+                  <th>العميل</th>
+                  <th>التاريخ</th>
+                  <th>الصافي</th>
+                  <th>الحالة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-invoices">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- System Summary & Quick Actions -->
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-header">
+            <div class="card-title">⚡ عمليات سريعة</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-primary" style="justify-content: flex-start; padding: 12px 16px;" onclick="MIFAD_APP.switchTab('new-invoice')">
+              <span>📄</span>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">رفع فاتورة PDF جديدة</div>
+                <div style="font-size: 0.8rem; opacity: 0.85;">استخراج تلقائي فوري مع جدول مفتوح للتعديل</div>
+              </div>
+            </button>
+
+            <button class="btn btn-secondary" style="justify-content: flex-start; padding: 12px 16px;" onclick="MIFAD_APP.switchTab('customers')">
+              <span>👥</span>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">متابعة كشوف حسابات العملاء</div>
+                <div style="font-size: 0.8rem; opacity: 0.85;">تحصيل الدفعات ومعاينة الأرصدة المستحقة</div>
+              </div>
+            </button>
+
+            <button class="btn btn-outline" style="justify-content: flex-start; padding: 12px 16px;" onclick="MIFAD_APP.switchTab('products')">
+              <span>📦</span>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">كتالوج أصناف ميفاد</div>
+                <div style="font-size: 0.8rem; opacity: 0.85;">إدارة الأسعار والوزن واستيراد شيت إكسيل</div>
+              </div>
+            </button>
+
+            <div style="background: var(--primary-light); border-radius: var(--radius-sm); padding: 14px; margin-top: 10px;">
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 4px;">إحصائية سريعة:</div>
+              <div style="font-size: 0.85rem; color: var(--secondary);">عدد الفواتير الإجمالي: <strong id="stat-inv-count">0</strong></div>
+              <div style="font-size: 0.85rem; color: var(--secondary);">عدد العملاء المسجلين: <strong id="stat-cust-count">0</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Outstanding Customers Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⏳ كشف بأعلى العملاء مديونية (لينا عندهم كام)</div>
+          <button class="btn btn-sm btn-outline" onclick="MIFAD_APP.switchTab('customers')">دليل العملاء كاملاً</button>
+        </div>
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>اسم العميل</th>
+                <th>كود العميل</th>
+                <th>إجمالي المبلغ المستحق</th>
+                <th>إجراءات التحصيل</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-top-debtors">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 2: NEW INVOICE CREATOR (MODE 1 & MODE 2)
+         ========================================================= -->
+    <section id="tab-new-invoice" class="page-tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📝</span> إنشاء فاتورة مبيعات جديدة - شركة ميفاد (MIFAD)
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-outline" id="btn-load-sample-pdf" title="تحميل نموذج عادل مصباح مباشرة للتجربة">
+              ⭐ تجربة نموذج عادل مصباح بنقرة واحدة
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="MIFAD_APP.switchTab('new-invoice')">🔄 تفريغ الفاتورة</button>
+          </div>
+        </div>
+
+        <!-- Mode 1: PDF Dropzone Upload Box -->
+        <div class="dropzone-box" id="pdf-dropzone">
+          <input type="file" id="pdf-file-input" accept=".pdf" style="display: none;">
+          <div class="dropzone-icon">📥</div>
+          <h3>الطريقة الأولى: اسحب وأفلت ملف PDF هنا أو انقر لاختيار الملف</h3>
+          <p>يقوم السيستم فوراً باستخراج العميل، التاريخ، رقم الفاتورة، وكافة البنود والأسعار وينزلها في جدول تفاعلي مفتوح للتعديل</p>
+        </div>
+
+        <!-- Invoice Form Header Fields -->
+        <div style="background: #f8fafc; border: 1px solid var(--border-dark); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--secondary); margin-bottom: 12px;">بيانات رأس الفاتورة والعميل:</h4>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>رقم الفاتورة (Invoice No.)</label>
+              <input type="text" id="inv-number" class="form-control" placeholder="B2B-SINV-2026-04360">
+            </div>
+
+            <div class="form-group">
+              <label>تاريخ الفاتورة</label>
+              <input type="date" id="inv-date" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>طريقة التعامل / السداد (كاش أو كريديت):</label>
+              <select id="inv-payment-type" class="form-control" style="font-weight: 700; border-color: var(--primary);">
+                <option value="credit">🔵 آجل / كريديت (Credit)</option>
+                <option value="cash">🟢 نقدي / كاش (Cash - سداد فوري)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>مسئول البيع (اختياري / منفصل تماماً):</label>
+              <input type="text" id="inv-sales-person" list="sales-persons-datalist" class="form-control" placeholder="اختر أو اكتب اسم مسئول البيع بحرية">
+              <datalist id="sales-persons-datalist">
+                <!-- Dynamically populated from Col E -->
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label>رقم أمر التوريد (إن وجد)</label>
+              <input type="text" id="inv-po-number" class="form-control" placeholder="PO-001">
+            </div>
+          </div>
+
+          <!-- Customer Data Container (Excel Columns C, D, F, G) -->
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin: 16px 0 20px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-weight: 800; color: var(--primary); font-size: 0.95rem;">
+                👤 بيانات العميل ومطابقة الإكسيل (كود C، اسم D، هاتف F، عنوان G):
+              </span>
+              <span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 12px; font-weight: bold;" id="inv-cust-count-badge">
+                367 عميل معتمد
+              </span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label style="font-weight: 700;">🔍 اختيار سريع للعميل (أو اكتب في الخانات بالأسفل للبحث الفوري):</label>
+              <select id="inv-customer-select" class="form-control" style="font-weight: 600; border-color: var(--primary);">
+                <!-- Dynamically populated from customers -->
+              </select>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>كود العميل (كولم C - Customer Code):</label>
+                <input type="text" id="inv-customer-code" list="customer-codes-datalist" class="form-control" placeholder="CUST-1000001686">
+                <datalist id="customer-codes-datalist"></datalist>
+              </div>
+
+              <div class="form-group">
+                <label>اسم العميل (كولم D - Customer Name):</label>
+                <input type="text" id="inv-customer-name" list="customers-names-datalist" class="form-control" placeholder="اكتب أو ابحث باسم العميل">
+                <datalist id="customers-names-datalist"></datalist>
+              </div>
+
+              <div class="form-group">
+                <label>مكان / عنوان العميل (كولم G - Territory):</label>
+                <input type="text" id="inv-customer-address" class="form-control" placeholder="القاهرة / الإسكندرية ...">
+              </div>
+
+              <div class="form-group">
+                <label>رقم حساب العميل (كولم F - الأرقام فقط):</label>
+                <input type="text" id="inv-customer-account" class="form-control" placeholder="122011000" readonly style="background: #f1f5f9; font-family: monospace; font-weight: bold; color: #0284c7;">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="inv-doc-code" value="SM/FM/09">
+        </div>
+
+        <!-- Editable Grid Header & Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <h4 style="font-size: 1rem; font-weight: 800; color: var(--secondary);">جدول بنود الفاتورة (مفتوح للتعديل المباشر 100%):</h4>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">يمكنك تعديل أي خلية مباشرة، أو اختيار الصنف من أيقونة القائمة (📋) لتعبئة السعر والوحدة آلياً.</div>
+          </div>
+          <button class="btn btn-sm btn-primary" id="btn-add-table-row">➕ إضافة سطر جديد</button>
+        </div>
+
+        <!-- Editable Items Table -->
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align: center;">م</th>
+                <th style="width: 150px;">كود الصنف</th>
+                <th>أسم الصنف وبيان المواصفات</th>
+                <th style="width: 90px; text-align: center;">الكميه</th>
+                <th style="width: 90px; text-align: center;">الوحده</th>
+                <th style="width: 110px; text-align: center;">سعر الوحده</th>
+                <th style="width: 130px; text-align: center;">القيمه الإجمالية</th>
+                <th style="width: 60px; text-align: center;">حذف</th>
+              </tr>
+            </thead>
+            <tbody id="invoice-table-body">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Effects, Discounts, Returns, & Arabic Tafqeet Box -->
+        <div class="effects-container">
+          <!-- Arabic Tafqeet & Legal Box -->
+          <div class="tafqeet-box">
+            <div>
+              <div class="tafqeet-label">المبلغ بالحروف والكلمات (التفقيط بالعربي التلقائي):</div>
+              <div class="tafqeet-content" id="tafqeet-preview-text">
+                صفر جنيه مصري فقط لا غير
+              </div>
+            </div>
+            <div class="legal-notice">
+              <strong>تنبيه قانوني رسمي:</strong> للشركة الحق في الرجوع علي العميل في حاله حدوث خطأ حسابي في الفاتوره
+            </div>
+          </div>
+
+          <!-- Summary & Effects Form -->
+          <div class="summary-box">
+            <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+              المؤثرات وحسابات الفاتورة:
+            </h4>
+
+            <div class="summary-row">
+              <span>إجمالي بنود الفاتورة:</span>
+              <strong id="calc-subtotal" style="font-size: 1.05rem;">0.00 ج.م</strong>
+            </div>
+
+            <!-- Discount Section -->
+            <div class="summary-row" style="background: #f8fafc; padding: 8px; border-radius: 4px;">
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span>خصم:</span>
+                <select id="inv-discount-type" class="form-control" style="width: 80px; padding: 2px 4px; height: 30px;">
+                  <option value="amount">مبلغ</option>
+                  <option value="percent">نسبة %</option>
+                </select>
+                <input type="number" id="inv-discount-value" class="form-control" value="0" style="width: 90px; height: 30px; text-align: center;">
+              </div>
+              <span id="calc-discount-display" style="color: var(--danger); font-weight: bold;">0.00 ج.م</span>
+            </div>
+
+            <!-- Returns Section -->
+            <div class="summary-row" style="background: #f8fafc; padding: 8px; border-radius: 4px;">
+              <div style="display: flex; gap: 6px; align-items: center; width: 65%;">
+                <span>مرتجع:</span>
+                <input type="number" id="inv-returns-amount" class="form-control" value="0" style="width: 90px; height: 30px; text-align: center;" placeholder="المبلغ">
+                <input type="text" id="inv-returns-notes" class="form-control" style="height: 30px; font-size: 0.8rem;" placeholder="ملاحظات المرتجع">
+              </div>
+              <span id="calc-returns-display" style="color: var(--danger); font-weight: bold;">0.00 ج.م</span>
+            </div>
+
+            <!-- Final Net Amount -->
+            <div class="summary-row total-row">
+              <span>صافي القيمة المستحقة:</span>
+              <span id="calc-net-total">0.00 ج.م</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-secondary" onclick="MIFAD_APP.switchTab('invoices')">إلغاء</button>
+          <button class="btn btn-primary" id="btn-save-invoice" style="font-size: 1.05rem; padding: 12px 28px;">
+            💾 حفظ الفاتورة ومعاينة الطباعة الرسمية
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 3: INVOICES ARCHIVE
+         ========================================================= -->
+    <section id="tab-invoices" class="page-tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📑 أرشيف الفواتير المسجلة في السيستم</div>
+          <div style="display: flex; gap: 12px;">
+            <input type="text" id="invoices-search-input" class="form-control" style="width: 280px;" placeholder="بحث برقم الفاتورة أو اسم العميل...">
+            <button class="btn btn-primary" onclick="MIFAD_APP.switchTab('new-invoice')">➕ فاتورة جديدة</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>رقم الفاتورة</th>
+                <th>تاريخ الفاتورة</th>
+                <th>نوع السداد</th>
+                <th>اسم العميل</th>
+                <th>كود العميل</th>
+                <th>صافي القيمة</th>
+                <th>الحالة والمرتجعات</th>
+                <th style="width: 320px;">الإجراءات والطباعة</th>
+              </tr>
+            </thead>
+            <tbody id="invoices-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB: RETURNS & CREDIT NOTES (إدارة وسجل المرتجعات)
+         ========================================================= -->
+    <section id="tab-returns" class="page-tab-content">
+      <!-- KPI Metrics for Returns -->
+      <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+        <div class="kpi-card returns">
+          <div class="kpi-info">
+            <h4>إجمالي قيمة المرتجعات</h4>
+            <div class="kpi-value" id="returns-kpi-total-amount" style="color: var(--danger);">0 ج.م</div>
+          </div>
+          <div class="kpi-icon">🔄</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h4>عدد أذون المرتجعات</h4>
+            <div class="kpi-value" id="returns-kpi-count" style="color: var(--primary);">0</div>
+          </div>
+          <div class="kpi-icon">📑</div>
+        </div>
+
+        <div class="kpi-card collected">
+          <div class="kpi-info">
+            <h4>تأثير المرتجعات المالي</h4>
+            <div class="kpi-value" style="color: var(--success); font-size: 1.05rem; font-weight: bold;">تخصم آلياً من كشف الحساب</div>
+          </div>
+          <div class="kpi-icon">✅</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🔄 سجل أذون المرتجعات وإشعارات الخصم (MIFAD Returns)</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              يتم استرجاع أي صنف من الفاتورة وخصم قيمته فوراً من الفاتورة ومن كشف حساب العميل مع إمكانية طباعة إذن مرتجع معتمد.
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="returns-search-input" class="form-control" style="width: 280px;" placeholder="بحث برقم المرتجع، الفاتورة، أو العميل...">
+            <button class="btn btn-danger" id="btn-open-create-return">➕ تسجيل إذن مرتجع جديد</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>رقم إذن المرتجع</th>
+                <th>تاريخ المرتجع</th>
+                <th>رقم الفاتورة الأصلية</th>
+                <th>اسم العميل</th>
+                <th>الأصناف المرتجعة</th>
+                <th>إجمالي قيمة المرتجع</th>
+                <th>ملاحظات وسبب الإرجاع</th>
+                <th style="width: 250px;">الإجراءات والطباعة</th>
+              </tr>
+            </thead>
+            <tbody id="returns-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 4: CUSTOMERS & ACCOUNT STATEMENTS
+         ========================================================= -->
+    <section id="tab-customers" class="page-tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">👥 دليل وحسابات عملاء شركة ميفاد (مطابقة شيت الإكسيل)</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              مطابقة الأعمدة: كود العميل (C)، اسم العميل (D)، مسؤول البيع (E)، رقم الحساب (F)، المحافظة والمكان (G).
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <span class="badge" id="customers-badge-count" style="background: #e0e7ff; color: #3730a3; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 0.85rem;">
+              367 عميل معتمد
+            </span>
+            <input type="text" id="customers-search-input" class="form-control" style="width: 240px;" placeholder="بحث بالاسم، الكود، المحافظة...">
+            <select id="customers-sales-filter" class="form-control" style="width: 200px;">
+              <option value="">-- كل مسؤولي البيع (Col E) --</option>
+              <!-- Dynamically populated from Col E -->
+            </select>
+            <button class="btn btn-primary" id="btn-add-customer">➕ تكويد عميل جديد</button>
+            <button class="btn btn-outline" id="btn-reseed-excel" title="إعادة تحميل الـ 367 عميل والـ 444 صنف من شيت الإكسيل فوراً">
+              🔄 استعادة بيانات الإكسيل
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>كود العميل (كولم C)</th>
+                <th>اسم العميل (كولم D)</th>
+                <th>المكان / المحافظة (كولم G)</th>
+                <th>رقم الحساب (كولم F)</th>
+                <th>مسؤول البيع (كولم E)</th>
+                <th>الرصيد المستحق (لنا)</th>
+                <th style="width: 240px;">كشف الحساب والتحصيل</th>
+              </tr>
+            </thead>
+            <tbody id="customers-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 5: PRODUCTS CATALOG
+         ========================================================= -->
+    <section id="tab-products" class="page-tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📦 كتالوج أصناف شركة ميفاد (MIFAD Products)</div>
+          <div style="display: flex; gap: 12px;">
+            <input type="file" id="excel-products-file" accept=".xlsx, .xls, .csv" style="display: none;">
+            <button class="btn btn-secondary" id="btn-import-excel-products" title="رفع ملف شيت إكسيل يحتوي على الأصناف والأسعار">
+              📊 استيراد أصناف من Excel / CSV
+            </button>
+            <input type="text" id="products-search-input" class="form-control" style="width: 240px;" placeholder="بحث بكود أو اسم الصنف...">
+            <button class="btn btn-primary" id="btn-add-product">➕ إضافة صنف جديد</button>
+          </div>
+        </div>
+
+        <div style="background: var(--primary-light); padding: 12px 18px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.9rem; color: var(--primary);">
+          💡 <strong>ملاحظة لمحمود:</strong> يمكنك في أي وقت رفع ملف Excel يحتوي على أصناف الشركة بأسعارها وأوزانها عبر زر "استيراد أصناف من Excel"، وسيتم إضافتها تلقائياً للكتالوج وللاختيار السريع عند عمل الفواتير.
+        </div>
+
+        <div class="table-responsive">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align: center;">م</th>
+                <th style="width: 150px;">كود الصنف</th>
+                <th>اسم الصنف والمواصفة</th>
+                <th style="width: 100px; text-align: center;">الوحدة (UOM)</th>
+                <th style="width: 120px; text-align: center;">الوزن المطابق</th>
+                <th style="width: 120px; text-align: center;">السعر (RATE)</th>
+                <th style="width: 80px; text-align: center;">تعديل</th>
+              </tr>
+            </thead>
+            <tbody id="products-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 6: SETTINGS & BACKUP
+         ========================================================= -->
+    <section id="tab-settings" class="page-tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚙️ النسخ الاحتياطي وإعدادات السيستم</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <!-- Backup Card -->
+          <div style="border: 1px solid var(--border-dark); border-radius: var(--radius-sm); padding: 20px;">
+            <h4 style="font-weight: 800; margin-bottom: 8px;">💾 النسخ الاحتياطي للبيانات</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+              حفظ وتصدير قاعدة بيانات السيستم بالكامل (الفواتير، العملاء، الدفعات، والأصناف) في ملف آمن للحفاظ على بياناتك.
+            </p>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-primary" id="btn-export-backup">📥 تصدير نسخة احتياطية (JSON)</button>
+              <input type="file" id="import-backup-file" accept=".json" style="display: none;">
+              <button class="btn btn-secondary" id="btn-import-backup">📤 استعادة نسخة سابقة</button>
+            </div>
+          </div>
+
+          <!-- Reset & Info -->
+          <div style="border: 1px solid var(--border-dark); border-radius: var(--radius-sm); padding: 20px;">
+            <h4 style="font-weight: 800; margin-bottom: 8px;">🔄 إعادة ضبط المصنع</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+              إعادة تحميل بيانات شركة ميفاد الافتراضية مع نموذج فاتورة عادل مصباح الأصلية.
+            </p>
+            <button class="btn btn-danger" id="btn-reset-defaults">⚠️ استعادة البيانات الأولية</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       MODAL 1: OFFICIAL MIFAD INVOICE PRINT VIEW
+       ========================================================= -->
+  <div class="modal-overlay" id="official-invoice-modal">
+    <div class="modal-box" style="max-width: 860px;">
+      <div class="modal-header no-print">
+        <div class="modal-title">🖨️ معاينة وطباعة الفاتورة الرسمية المعتمدة - شركة ميفاد</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة الفاتورة / تصدير PDF</button>
+          <button class="modal-close">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="official-invoice-render-target">
+        <!-- Rendered sheet will be injected here -->
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-secondary modal-cancel">إغلاق</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة الفاتورة الآن (A4)</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 2: DELIVERY RECEIPT (إذن استلام بضاعة)
+       ========================================================= -->
+  <div class="modal-overlay" id="delivery-receipt-modal">
+    <div class="modal-box" style="max-width: 860px;">
+      <div class="modal-header no-print">
+        <div class="modal-title">🚚 معاينة وطباعة إذن استلام بضاعة (Delivery Receipt)</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-success" onclick="window.print()">🖨️ طباعة إذن الاستلام</button>
+          <button class="modal-close">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="delivery-receipt-render-target">
+        <!-- Rendered delivery sheet will be injected here -->
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-secondary modal-cancel">إغلاق</button>
+        <button class="btn btn-success" onclick="window.print()">🖨️ طباعة إذن الاستلام الآن (A4)</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 3: CUSTOMER STATEMENT (كشف حساب عميل تفصيلي)
+       ========================================================= -->
+  <div class="modal-overlay" id="statement-modal">
+    <div class="modal-box" style="max-width: 940px;">
+      <div class="modal-header no-print">
+        <div class="modal-title">📑 كشف حساب عميل رسمي تفصيلي</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة كشف الحساب</button>
+          <button class="modal-close">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="statement-render-target">
+        <!-- Rendered statement injected here -->
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-secondary modal-cancel">إغلاق</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة كشف الحساب (A4)</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 4: RECORD PAYMENT (تسجيل دفعة / سند قبض)
+       ========================================================= -->
+  <div class="modal-overlay" id="payment-record-modal">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title">💵 تسجيل سند قبض / سداد عميل</div>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modal-payment-cust-code">
+        <div style="background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <div style="font-weight: 800; font-size: 1.05rem;" id="modal-payment-cust-name">اسم العميل</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            الرصيد المستحق حالياً: <strong id="modal-payment-cust-balance" style="color: var(--accent);">0 ج.م</strong>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>المبلغ المسدد (ج.م):</label>
+          <input type="number" step="any" id="modal-payment-amount" class="form-control" style="font-size: 1.2rem; font-weight: bold; color: var(--success);">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>تاريخ السداد:</label>
+          <input type="date" id="modal-payment-date" class="form-control">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>طريقة وسيلة الدفع (اختر طريقة السداد):</label>
+          <select id="modal-payment-method" class="form-control" style="font-weight: 700;">
+            <option value="نقدي">💵 نقدي / كاش (Cash)</option>
+            <option value="تحويل بنكي">🏦 تحويل بنكي (Bank Transfer)</option>
+            <option value="شيك">📜 شيك بنكي (Cheque)</option>
+            <option value="محفظة إلكترونية">📱 محفظة إلكترونية (فودافون كاش / اتصالات / أورنج / وي)</option>
+            <option value="إنستا باي">⚡ إنستا باي (InstaPay)</option>
+            <option value="فيزا / بطاقة بنكية">💳 فيزا / بطاقة بنكية (Visa / Card)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>رقم المرجع / رقم التحويل / رقم الشيك (إن وجد):</label>
+          <input type="text" id="modal-payment-ref" class="form-control" placeholder="TRX-12345 أو رقم الشيك">
+        </div>
+
+        <div class="form-group">
+          <label>ملاحظات السداد:</label>
+          <input type="text" id="modal-payment-notes" class="form-control" placeholder="سداد دفعة تحت الحساب">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">إلغاء</button>
+        <button class="btn btn-success" id="btn-save-payment-modal">✅ حفظ السداد وتحديث الحساب فوراً</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 4.5: CREATE RETURN ON INVOICE (تسجيل إذن مرتجع)
+       ========================================================= -->
+  <div class="modal-overlay" id="return-create-modal">
+    <div class="modal-box" style="max-width: 950px;">
+      <div class="modal-header">
+        <div class="modal-title">🔄 تسجيل إذن مرتجع بضاعة على فاتورة مبيعات</div>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-group" style="grid-column: span 2;">
+            <label style="font-weight: 800; color: var(--primary);">اختر الفاتورة المراد عمل مرتجع عليها:</label>
+            <select id="return-invoice-select" class="form-control" style="font-weight: 700; border-color: var(--primary);">
+              <!-- Populated with all invoices -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>تاريخ إذن المرتجع:</label>
+            <input type="date" id="return-date" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>رقم إذن المرتجع:</label>
+            <input type="text" id="return-number" class="form-control" readonly style="background: #f1f5f9; font-weight: bold; color: var(--danger);">
+          </div>
+        </div>
+
+        <div id="return-invoice-info-card" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: none;">
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.9rem;">
+            <div>العميل: <strong id="return-cust-name">-</strong> (<span id="return-cust-code">-</span>)</div>
+            <div>مسؤول البيع: <strong id="return-sales-person">-</strong></div>
+            <div>تاريخ الفاتورة: <strong id="return-inv-date">-</strong></div>
+            <div>صافي الفاتورة الأصلي: <strong id="return-inv-net" style="color: var(--primary);">-</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 8px; font-weight: 800; color: var(--secondary);">
+          حدد الكميات والبنود المرتجعة من الفاتورة:
+        </div>
+        <div class="table-responsive" style="max-height: 280px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 6px;">
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>كود الصنف</th>
+                <th>اسم الصنف</th>
+                <th>الوحدة</th>
+                <th>سعر الوحدة</th>
+                <th>الكمية بالفاتورة</th>
+                <th style="width: 120px; background: #fee2e2; color: #991b1b;">الكمية المرتجعة</th>
+                <th>قيمة المرتجع</th>
+                <th style="width: 180px;">سبب المرتجع</th>
+              </tr>
+            </thead>
+            <tbody id="return-items-table-body">
+              <!-- Dynamically populated from invoice items -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div style="font-weight: 800; color: #9f1239; font-size: 1.1rem;">
+              إجمالي قيمة المرتجع: <span id="return-calc-total" style="font-size: 1.35rem; font-weight: 900;">0.00 ج.م</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #881337; margin-top: 4px;" id="return-calc-tafqeet">
+              فقط صفر جنيه مصري لا غير
+            </div>
+          </div>
+          <div style="width: 320px;">
+            <input type="text" id="return-general-notes" class="form-control" placeholder="ملاحظات عامة على المرتجع...">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">إلغاء</button>
+        <button class="btn btn-danger" id="btn-save-return-action">✅ اعتماد المرتجع وتنزيله من حساب العميل</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 4.6: PRINT RETURN VOUCHER (طباعة إذن المرتجع)
+       ========================================================= -->
+  <div class="modal-overlay" id="return-print-modal">
+    <div class="modal-box" style="max-width: 900px;">
+      <div class="modal-header no-print">
+        <div class="modal-title">🖨️ إذن مرتجع مبيعات رسمي معتمد (MIFAD)</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة (A4)</button>
+          <button class="modal-close">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="return-print-render-target">
+        <!-- Rendered return voucher injected here -->
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-secondary modal-cancel">إغلاق</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة الإذن</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 5: CUSTOMER EDIT MODAL
+       ========================================================= -->
+  <div class="modal-overlay" id="customer-edit-modal">
+    <div class="modal-box" style="max-width: 550px;">
+      <div class="modal-header">
+        <div class="modal-title">👥 بيانات العميل</div>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modal-customer-id">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>كود العميل:</label>
+          <input type="text" id="modal-customer-code" class="form-control" placeholder="CUST-1000011296">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>اسم العميل / الشركة:</label>
+          <input type="text" id="modal-customer-name" class="form-control" placeholder="م/عادل مصباح">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>العنوان:</label>
+          <input type="text" id="modal-customer-address" class="form-control" placeholder="منطقة 45 الاسكندرية">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>رقم الهاتف:</label>
+          <input type="text" id="modal-customer-phone" class="form-control" placeholder="010XXXXXXXX">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>الرصيد الافتتاحي السابق (لنا):</label>
+          <input type="number" step="any" id="modal-customer-opening" class="form-control" value="0">
+        </div>
+        <div class="form-group">
+          <label>ملاحظات:</label>
+          <input type="text" id="modal-customer-notes" class="form-control" placeholder="ملاحظات عامة">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">إلغاء</button>
+        <button class="btn btn-primary" id="btn-save-customer-modal">حفظ العميل</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 6: PRODUCT EDIT MODAL
+       ========================================================= -->
+  <div class="modal-overlay" id="product-edit-modal">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title">📦 بيانات الصنف في الكتالوج</div>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>كود الصنف:</label>
+          <input type="text" id="modal-prod-code" class="form-control" placeholder="BS600205001">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>اسم الصنف والمواصفات:</label>
+          <input type="text" id="modal-prod-name" class="form-control" placeholder="كريموسي 200 ( 1كجم )">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>الوحدة الافتراضية:</label>
+          <input type="text" id="modal-prod-unit" class="form-control" placeholder="1kg أو 10KG أو كرتونة">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>السعر الافتراضي للوحدة (ج.م):</label>
+          <input type="number" step="any" id="modal-prod-price" class="form-control" placeholder="360">
+        </div>
+        <div class="form-group">
+          <label>الوزن / الحجم:</label>
+          <input type="text" id="modal-prod-weight" class="form-control" placeholder="1 كجم">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">إلغاء</button>
+        <button class="btn btn-primary" id="btn-save-product-modal">حفظ الصنف</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Scripts (Fully Offline) -->
+  <script src="assets/logo_base64.js"></script>
+  <script src="assets/mifad_seed_data.js"></script>
+  <script src="libs/pdf.min.js"></script>
+  <script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+    }
+  </script>
+  <script src="libs/xlsx.full.min.js"></script>
+  <script src="js/tafqeet.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/pdf_extractor.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
