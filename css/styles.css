@@ -848,58 +848,291 @@ body {
 }
 
 /* =========================================================
-   PRINT MEDIA RULES (PERFECT A4 EXPORT)
+   PRINT MEDIA RULES (PERFECT A4 EXPORT - EXACT 1-PAGE FIT)
    ========================================================= */
 @media print {
-  body {
-    background: #ffffff !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
   }
 
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    font-size: 8.5pt !important;
+  }
+
+  /* Hide entire application shell and non-printable elements */
+  .app-layout,
   .app-header,
   .app-nav,
+  .main-content,
+  .toast-container,
   .no-print,
+  .modal-header,
   .modal-footer,
-  .card-header .btn,
-  .modal-close {
+  .modal-close,
+  button,
+  .btn {
     display: none !important;
   }
 
-  .main-content {
-    margin: 0 !important;
-    padding: 0 !important;
-    max-width: 100% !important;
-  }
-
+  /* Hide all modal overlays EXCEPT the active one */
   .modal-overlay {
+    display: none !important;
     position: static !important;
     background: none !important;
     padding: 0 !important;
-    display: block !important;
+    margin: 0 !important;
+    border: none !important;
   }
 
-  .modal-box {
+  /* Only display the currently active modal overlay */
+  .modal-overlay.active {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .modal-overlay.active .modal-box {
+    display: block !important;
+    position: static !important;
     box-shadow: none !important;
     border: none !important;
-    max-width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: transparent !important;
+    transform: none !important;
   }
 
+  .modal-overlay.active .modal-body {
+    display: block !important;
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* SHEET STYLING FOR A4 PRINT: Precision fit to millimeter */
   .official-invoice-sheet,
   .receipt-sheet,
   .return-voucher-sheet {
     box-shadow: none !important;
-    border: none !important;
+    border: 1.5px solid #000000 !important;
     width: 100% !important;
     max-width: 100% !important;
-    padding: 0 !important;
+    padding: 8px 12px !important;
     margin: 0 !important;
+    box-sizing: border-box !important;
+    font-family: 'Cairo', Arial, sans-serif !important;
+    font-size: 8pt !important;
+    line-height: 1.35 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
   }
 
-  @page {
-    size: A4 portrait;
-    margin: 12mm 15mm 12mm 15mm;
+  /* Sheet Top Header */
+  .sheet-top {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1.5px solid #000000 !important;
+  }
+
+  .sheet-logo-box {
+    border: 1.5px solid #000 !important;
+    padding: 3px 8px !important;
+    width: 210px !important;
+    text-align: center !important;
+  }
+
+  .sheet-logo-title {
+    font-size: 7.5pt !important;
+    font-weight: bold !important;
+    margin-bottom: 2px !important;
+    padding-bottom: 2px !important;
+    border-bottom: 1px solid #000 !important;
+  }
+
+  .sheet-logo-img {
+    max-height: 38px !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+
+  .sheet-top-meta {
+    text-align: left !important;
+    font-size: 8pt !important;
+    font-weight: bold !important;
+    line-height: 1.3 !important;
+  }
+
+  .sheet-doc-code {
+    font-size: 8pt !important;
+    font-weight: bold !important;
+    margin-top: 2px !important;
+  }
+
+  /* Invoice Title */
+  .sheet-invoice-title {
+    font-size: 15pt !important;
+    font-weight: 900 !important;
+    letter-spacing: 6px !important;
+    margin: 4px 0 8px 0 !important;
+    text-align: center !important;
+  }
+
+  /* Meta Grid */
+  .sheet-meta-grid {
+    display: flex !important;
+    justify-content: space-between !important;
+    font-size: 8pt !important;
+    margin-bottom: 6px !important;
+    line-height: 1.45 !important;
+    padding: 5px 8px !important;
+    border: 1px solid #000 !important;
+    background: #f8fafc !important;
+  }
+
+  .sheet-meta-col {
+    width: 48% !important;
+  }
+
+  .meta-row {
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .meta-label {
+    font-weight: bold !important;
+    white-space: nowrap !important;
+  }
+
+  .meta-val {
+    font-weight: 600 !important;
+  }
+
+  /* Tables: Crisp borders and exact compact sizing */
+  .sheet-table,
+  .receipt-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8pt !important;
+    margin-bottom: 6px !important;
+  }
+
+  .sheet-table th, .sheet-table td,
+  .receipt-table th, .receipt-table td {
+    border: 1px solid #000 !important;
+    padding: 3px 5px !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+
+  .sheet-table th,
+  .receipt-table th {
+    background: #f1f5f9 !important;
+    font-weight: bold !important;
+    font-size: 8pt !important;
+  }
+
+  .sheet-table td.text-right {
+    text-align: right !important;
+  }
+
+  .sheet-table td.text-left {
+    text-align: left !important;
+  }
+
+  /* Totals & Effects Box */
+  .sheet-subtotal-row {
+    border: 1px solid #000 !important;
+    padding: 3px 8px !important;
+    font-size: 8.5pt !important;
+    font-weight: bold !important;
+    margin-bottom: 4px !important;
+  }
+
+  .sheet-effects-box {
+    width: 55% !important;
+    margin: 4px 0 !important;
+    border: 1px solid #000 !important;
+    font-size: 8pt !important;
+  }
+
+  .sheet-effects-header {
+    background: #f1f5f9 !important;
+    padding: 2px !important;
+    font-weight: bold !important;
+    border-bottom: 1px solid #000 !important;
+    font-size: 8pt !important;
+    text-align: center !important;
+  }
+
+  .sheet-effects-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 2px 8px !important;
+    font-size: 8pt !important;
+    border-bottom: 1px solid #000 !important;
+    font-weight: bold !important;
+  }
+
+  .sheet-effects-row:last-child {
+    border-bottom: none !important;
+  }
+
+  .sheet-tafqeet-line {
+    margin: 5px 0 !important;
+    font-size: 8pt !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    background: #f8fafc !important;
+    padding: 4px !important;
+    border: 1px dashed #000 !important;
+  }
+
+  .sheet-legal-warning {
+    text-align: center !important;
+    font-size: 7.5pt !important;
+    font-weight: bold !important;
+    margin: 5px 0 !important;
+  }
+
+  .sheet-signatures {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 10px !important;
+    padding: 0 30px !important;
+    font-size: 8pt !important;
+    font-weight: bold !important;
+  }
+
+  .sig-block {
+    text-align: center !important;
+  }
+
+  .sig-name {
+    margin-top: 14px !important;
+    font-weight: normal !important;
   }
 
   * {
